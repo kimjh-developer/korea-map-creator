@@ -6,18 +6,18 @@ export default function Sidebar({ regions, addRegion, updateRegion, deleteRegion
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <h1>Map Creator</h1>
-        <p>Color regions of South Korea dynamically</p>
+        <h1>수거히어로권역</h1>
+        <p>수거히어로 대리점 계약 권역</p>
       </div>
 
       <div className="level-toggle">
-        <button 
+        <button
           className={`toggle-btn ${mapLevel === 'province' ? 'active' : ''}`}
           onClick={() => setMapLevel('province')}
         >
           시/도 단위
         </button>
-        <button 
+        <button
           className={`toggle-btn ${mapLevel === 'municipal' ? 'active' : ''}`}
           onClick={() => setMapLevel('municipal')}
         >
@@ -33,8 +33,8 @@ export default function Sidebar({ regions, addRegion, updateRegion, deleteRegion
       <div className="region-list">
         {regions.map((region) => (
           <div key={region.id} className="region-item">
-            <RegionSelector 
-              names={region.names} 
+            <RegionSelector
+              names={region.names}
               onChange={(newNames) => updateRegion(region.id, 'names', newNames)}
               geoData={geoData}
             />
