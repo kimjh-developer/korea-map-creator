@@ -2,7 +2,7 @@ import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import RegionSelector from './RegionSelector';
 
-export default function Sidebar({ regions, addRegion, updateRegion, deleteRegion, mapLevel, setMapLevel, geoData }) {
+export default function Sidebar({ regions, addRegion, updateRegion, deleteRegion, mapLevel, setMapLevel, geoData, activeGroupId, setActiveGroupId }) {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
@@ -32,12 +32,18 @@ export default function Sidebar({ regions, addRegion, updateRegion, deleteRegion
 
       <div className="region-list">
         {regions.map((region) => (
-          <div key={region.id} className="region-item">
-            <RegionSelector
-              names={region.names}
-              onChange={(newNames) => updateRegion(region.id, 'names', newNames)}
-              geoData={geoData}
-            />
+          <div 
+            key={region.id} 
+            className={`region-item ${activeGroupId === region.id ? 'active-group' : ''}`}
+            onClick={() => setActiveGroupId(region.id)}
+          >
+            <div onClick={(e) => e.stopPropagation()} style={{ flex: 1, display: 'flex' }}>
+              <RegionSelector
+                names={region.names}
+                onChange={(newNames) => updateRegion(region.id, 'names', newNames)}
+                geoData={geoData}
+              />
+            </div>
             <input
               type="color"
               className="color-picker"

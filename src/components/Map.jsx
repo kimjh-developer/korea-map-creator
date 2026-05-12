@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
 
-export default function Map({ regions, mapLevel, geoData, allFeatures }) {
+export default function Map({ regions, mapLevel, geoData, allFeatures, onRegionClick }) {
   const svgRef = useRef(null);
   const containerRef = useRef(null);
   const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, text: '' });
@@ -62,9 +62,14 @@ export default function Map({ regions, mapLevel, geoData, allFeatures }) {
       })
       .on('mouseleave', () => {
         setTooltip((prev) => ({ ...prev, visible: false }));
+      })
+      .on('click', (e, d) => {
+        if (onRegionClick) {
+          onRegionClick(d.properties.name);
+        }
       });
 
-  }, [geoData]);
+  }, [geoData, onRegionClick]);
 
   // Apply colors and borders when regions prop changes
   useEffect(() => {

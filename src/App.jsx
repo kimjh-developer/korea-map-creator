@@ -14,6 +14,14 @@ function App() {
   const [municipalData, setMunicipalData] = useState([]);
   const [allFeatures, setAllFeatures] = useState([]);
 
+  const [activeGroupId, setActiveGroupId] = useState(null);
+
+  useEffect(() => {
+    if (regions.length > 0 && activeGroupId === null) {
+      setActiveGroupId(regions[0].id);
+    }
+  }, [regions, activeGroupId]);
+
   useEffect(() => {
     Promise.all([
       fetch(`${import.meta.env.BASE_URL}skorea_provinces_topo_simple.json`).then(res => res.json()),
@@ -56,10 +64,12 @@ function App() {
   }, []);
 
   const addRegion = () => {
+    const newId = Date.now();
     setRegions([
       ...regions,
-      { id: Date.now(), names: [], color: '#ff5722' }
+      { id: newId, names: [], color: '#ff5722' }
     ]);
+    setActiveGroupId(newId);
   };
 
   const updateRegion = (id, field, value) => {
@@ -72,6 +82,26 @@ function App() {
 
   const deleteRegion = (id) => {
     setRegions(regions.filter((region) => region.id !== id));
+    if (activeGroupId === id) {
+      setActiveGroupId(regions.length > 1 ? regions.find(r => r.id !== id).id : null);
+    }
+  };
+
+  const handleRegionClick = (regionName) => {
+    if (!activeGroupId) return;
+
+    setRegions(prevRegions => {
+      return prevRegions.map(region => {
+        if (region.id === activeGroupId) {
+          const names = region.names || [];
+          const newNames = names.includes(regionName)
+            ? names.filter(n => n !== regionName)
+            : [...names, regionName];
+          return { ...region, names: newNames };
+        }
+        return region;
+      });
+    });
   };
 
   const currentGeoData = mapLevel === 'province' ? provinceData : municipalData;
@@ -86,8 +116,15 @@ function App() {
         mapLevel={mapLevel}
         setMapLevel={setMapLevel}
         geoData={allFeatures}
+        activeGroupId={activeGroupId}
+        setActiveGroupId={setActiveGroupId}
       />
-      <Map regions={regions} geoData={currentGeoData} allFeatures={allFeatures} />
+      <Map 
+        regions={regions} 
+        geoData={currentGeoData} 
+        allFeatures={allFeatures} 
+        onRegionClick={handleRegionClick}
+      />
     </>
   );
 }
