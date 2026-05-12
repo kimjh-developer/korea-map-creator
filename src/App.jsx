@@ -5,16 +5,35 @@ import Map from './components/Map';
 import './index.css';
 
 function App() {
-  const [mapLevel, setMapLevel] = useState('province'); // 'province' or 'municipal'
-  const [regions, setRegions] = useState([
-    { id: Date.now(), names: ['서울특별시'], color: '#3b82f6' }
-  ]);
+  const [mapLevel, setMapLevel] = useState(() => {
+    const saved = localStorage.getItem('mapCreatorLevel');
+    return saved || 'province';
+  });
+  const [regions, setRegions] = useState(() => {
+    const saved = localStorage.getItem('mapCreatorRegions');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse regions from local storage');
+      }
+    }
+    return [{ id: Date.now(), names: ['서울특별시'], color: '#3b82f6' }];
+  });
   
   const [provinceData, setProvinceData] = useState([]);
   const [municipalData, setMunicipalData] = useState([]);
   const [allFeatures, setAllFeatures] = useState([]);
 
   const [activeGroupId, setActiveGroupId] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem('mapCreatorLevel', mapLevel);
+  }, [mapLevel]);
+
+  useEffect(() => {
+    localStorage.setItem('mapCreatorRegions', JSON.stringify(regions));
+  }, [regions]);
 
   useEffect(() => {
     if (regions.length > 0 && activeGroupId === null) {
@@ -118,6 +137,7 @@ function App() {
         geoData={allFeatures}
         activeGroupId={activeGroupId}
         setActiveGroupId={setActiveGroupId}
+        setRegions={setRegions}
       />
       <Map 
         regions={regions} 
