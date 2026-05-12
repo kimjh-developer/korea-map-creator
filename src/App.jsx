@@ -16,8 +16,8 @@ function App() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/skorea_provinces_topo_simple.json').then(res => res.json()),
-      fetch('/skorea_municipalities_topo_simple.json').then(res => res.json())
+      fetch(`${import.meta.env.BASE_URL}skorea_provinces_topo_simple.json`).then(res => res.json()),
+      fetch(`${import.meta.env.BASE_URL}skorea_municipalities_topo_simple.json`).then(res => res.json())
     ]).then(([provTopo, muniTopo]) => {
       const provGeo = topojson.feature(provTopo, provTopo.objects.skorea_provinces_geo).features;
       const muniGeo = topojson.feature(muniTopo, muniTopo.objects.skorea_municipalities_geo).features;
